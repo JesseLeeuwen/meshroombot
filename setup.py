@@ -1,4 +1,3 @@
-
 from setuptools import setup
 
 setup(name='meshroombot',
@@ -9,5 +8,6 @@ setup(name='meshroombot',
       author_email='jesse@emberglitch.com',
       license='MIT',
       packages=['meshroombot'],
-      scripts=['bin/meshroombot-run', 'bin/meshroombot-setup'],
+      scripts=['bin/meshroombot-run.py'],
+      include_package_data=True,
       zip_safe=False)

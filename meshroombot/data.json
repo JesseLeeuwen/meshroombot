@@ -1,0 +1,36 @@
+{
+    "MeshFiltering_1": {
+        "inputMesh": "{Meshing_1.outputMesh}",
+        "removeLargeTrianglesFactor": 60.0,
+        "keepLargestMeshOnly": true,
+        "iterations": 5,
+        "lambda": 1.0,
+        "verboseLevel": "info"
+    },
+    "Texturing_1":{
+        "inputMesh": "{cache}/../Zmesh.obj",
+        "textureSide": 8192,
+        "downscale": 1,
+        "outputTextureFileType": "png",
+        "unwrapMethod": "Basic",
+        "useUDIM": true,
+        "fillHoles": false,
+        "padding": 5,
+        "correctEV": false,
+        "useScore": true,
+        "processColorspace": "sRGB",
+        "multiBandDownscale": 4,
+        "multiBandNbContrib": {
+            "high": 1,
+            "midHigh": 5,
+            "midLow": 10,
+            "low": 0
+        },
+        "bestScoreThreshold": 0.1,
+        "angleHardThreshold": 90.0,
+        "forceVisibleByAllVertices": false,
+        "flipNormals": false,
+        "visibilityRemappingMethod": "PullPush",
+        "verboseLevel": "info" 
+    }
+}
