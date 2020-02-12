@@ -17,11 +17,17 @@
 ## Description
 
 
-
 #### Technologies
 
 - [Python 3.6](https://www.python.org/)
 - [Meshroom](https://github.com/alicevision/meshroom)
+
+#### to do's
+
+- create a jobTemplate library
+- a way to set templates (json)
+- use something else then lambda for acceptance citerria of jobs templates
+- cleaner way of managing state for directories
 
 [Back To The Top](#MeshroomBot)
 
@@ -34,11 +40,14 @@
 ```
 > git clone https://github.com/JesseLeeuwen/meshroombot
 > cd meshroombot
-> pip install
+> pip install .
 ```
 
 #### Usage
 
+```
+> meshroombot-run.py
+```
 
 [Back To The Top](#MeshroomBot)
 
