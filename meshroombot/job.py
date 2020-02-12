@@ -9,7 +9,7 @@ jobTemplates = {
     "new scan" : {
         "commands" : [
             "cmd /C \"cd /D \"{meshroom}\" && meshroom_photogrammetry.exe --save \"{folder}/Meshroom/run.mg\" --input \"{folder}/Photo's/\" --cache \"{folder}/Meshroom/\" --overrides \"{override}\" \"",
-            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/run.mg\" --forceStatus --toNode Texturing --cache \"{folder}/Meshroom/\" \""
+            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/run.mg\" --forceStatus --toNode MeshFiltering --cache \"{folder}/Meshroom/\" \""
         ],
         "accept" : lambda a: ( not os.path.basename( a ).endswith(']') and os.path.isdir(a + "/Photo's") ),
         "computeState"  : "[-]",
@@ -44,6 +44,7 @@ class job:
 
         for cmd in self.jobSettings["commands"]:
             cmd_compiled = self.ParseCommandArguments( cmd )
+            print( "run: " + cmd_compiled )
             # check for error
             if subprocess.call( cmd_compiled ) > 0:
                 error = True
