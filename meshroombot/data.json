@@ -8,7 +8,7 @@
         "verboseLevel": "info"
     },
     "Texturing_1":{
-        "inputMesh": "{cache}/../Zmesh.obj",
+        "inputMesh": "{cache}/Zmesh.obj",
         "textureSide": 8192,
         "downscale": 1,
         "outputTextureFileType": "png",
