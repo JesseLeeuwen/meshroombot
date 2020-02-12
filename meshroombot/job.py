@@ -4,28 +4,24 @@ import subprocess
 import re
 
 #api
-# job.Execute(settings)
-jobTemplates = {
-    "new scan" : {
-        "commands" : [
-            "cmd /C \"cd /D \"{meshroom}\" && meshroom_photogrammetry.exe --save \"{folder}/Meshroom/run.mg\" --input \"{folder}/Photo's/\" --cache \"{folder}/Meshroom/\" --overrides \"{override}\" \"",
-            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/run.mg\" --forceStatus --toNode MeshFiltering --cache \"{folder}/Meshroom/\" \""
-        ],
-        "accept" : lambda a: ( not os.path.basename( a ).endswith(']') and os.path.isdir(a + "/Photo's") ),
-        "computeState"  : "[-]",
-        "doneState"     : "[+]",
-        "error"         : "[!]"
-    },
-    "texturing" : {
-        "commands" : [
-            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/run.mg\" --forceStatus --toNode Texturing --cache \"{folder}/Meshroom/\" \""
-        ],
-        "accept" : lambda a: ( os.path.isfile(a +'/Meshroom/Zmesh.obj') and os.path.basename(a).endswith('[+]') ),
-        "computeState"  : "[-]",
-        "doneState "    : "[#]",
-        "error"         : "[!!]"
-    }
-}
+# job.Execute()
+
+# commands can contain these variables:
+# {folder} the directory of the scans which is being processed
+# {meshroom} the directory of meshroom ( set in conf.ini )
+# {override} the path of the override/ settings json
+
+
+# "template_name" : {
+#     "commands" : [
+#         "cmd command to run for this job", 
+#     ],
+#     "accept" : lambda(path) which checks if the given pass has all the requirements for this job,
+#     "computeState"  : "suffix to give the folder when computing default: [-]",
+#     "doneState"     : "suffix to give when the job was finished succesfully",
+#     "error"         : "suffix for when the job was finisched with an error [!]"
+# },
+
 
 class job:
     def __init__( self, jobSettings : dict, projectFolder : str ):

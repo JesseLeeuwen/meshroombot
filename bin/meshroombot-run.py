@@ -68,11 +68,34 @@ with open(settingsPath, 'w') as configfile:
     Config.write(configfile)
     configfile.close( )
 
+# template lib
+jobTemplates = {
+    "new scan" : {
+        "commands" : [
+            "cmd /C \"cd /D \"{meshroom}\" && meshroom_photogrammetry.exe --save \"{folder}/Meshroom/run.mg\" --input \"{folder}/Photo's/\" --cache \"{folder}/Meshroom/\" --overrides \"{override}\" \"",
+            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/run.mg\" --forceStatus --toNode MeshFiltering --cache \"{folder}/Meshroom/\" \""
+        ],
+        "accept" : lambda a: ( not os.path.basename( a ).endswith(']') and os.path.isdir(a + "/Photo's") ),
+        "computeState"  : "[-]",
+        "doneState"     : "[+]",
+        "error"         : "[!]"
+    },
+    "texturing" : {
+        "commands" : [
+            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/run.mg\" --forceStatus --toNode Texturing --cache \"{folder}/Meshroom/\" \""
+        ],
+        "accept" : lambda a: ( os.path.isfile(a +'/Meshroom/Zmesh.obj') and os.path.basename(a).endswith('[+]') ),
+        "computeState"  : "[-]",
+        "doneState "    : "[#]",
+        "error"         : "[!!]"
+    }
+}
+
 # start polling jobs on interval
 try:
     while( True ):
         # get Job
-        job = GetJob( directory )
+        job = GetJob( directory, jobTemplates )
         
         if job is not None:
             job.SetSettingData( Config["settings"]["meshroom"] )
