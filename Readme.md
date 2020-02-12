@@ -19,8 +19,9 @@
 
 #### Technologies
 
+- [Pyinstaller 3.2](https://pythonhosted.org/PyInstaller/index.html)
 - [Python 3.6](https://www.python.org/)
-- [Meshroom](https://github.com/alicevision/meshroom)
+- [Meshroom 2019.2](https://github.com/alicevision/meshroom)
 
 #### to do's
 
@@ -44,9 +45,21 @@
 ```
 
 #### Usage
+to run the meshroombot after installing you need to run the meshroombot-run file
 
 ```
 > meshroombot-run.py
+```
+
+#### Build
+
+building meshroombot is possible with pyinstaller
+The repo has a pre build spec file that includes data files with the build
+
+```
+> cd meshroombot/bin
+> pyinstaller meshroombot-run.spec
+
 ```
 
 [Back To The Top](#MeshroomBot)
