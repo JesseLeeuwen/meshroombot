@@ -1,12 +1,4 @@
 import os
-import re
-
-statusLookup = { 
-    "-": "processing", 
-    "+": "available", # check content "/Meshroom/Zmesh.obj" before passing to Texturing
-    "#": "texture done",
-    "!": "error"
-}
 
 def GetAllSubdirectories( path : str ):
     # loop through all sub directories
@@ -15,16 +7,10 @@ def GetAllSubdirectories( path : str ):
         if os.path.isdir(os.path.join(path, name))]
 
 def CheckFolderStatus( folderName: str, path: str ) -> str:    
-    status = re.findall( r"(?<=\[)(.*?)(?=\])", folderName)
-    
     try:
         # check if folder is locked
         os.rename(path, path+ "2")
         os.rename(path+"2", path)
-
-        if( status == None or len( status ) == 0 ):
-            return "available"
+        return "available"
     except:
         return "error" 
-    
-    return statusLookup[ status[0] ]
