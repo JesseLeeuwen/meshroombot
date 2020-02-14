@@ -8,29 +8,14 @@
         "verboseLevel": "info"
     },
     "Texturing_1":{
-        "inputMesh": "{cache}/Zmesh.obj",
-        "textureSide": 8192,
-        "downscale": 1,
-        "outputTextureFileType": "png",
-        "unwrapMethod": "Basic",
-        "useUDIM": true,
-        "fillHoles": false,
-        "padding": 5,
-        "correctEV": false,
-        "useScore": true,
-        "processColorspace": "sRGB",
-        "multiBandDownscale": 4,
-        "multiBandNbContrib": {
-            "high": 1,
-            "midHigh": 5,
-            "midLow": 10,
-            "low": 0
-        },
-        "bestScoreThreshold": 0.1,
-        "angleHardThreshold": 90.0,
-        "forceVisibleByAllVertices": false,
-        "flipNormals": false,
-        "visibilityRemappingMethod": "PullPush",
-        "verboseLevel": "info" 
+        "inputMesh": "{MeshFiltering_1.outputMesh}../../Zmesh.obj",
+        "textureSide": "8192",
+        "downscale":"1",
+        "outputTextureFileType":"jpg",
+        "unwrapMethod":"Basic",
+        "useUDIM":"1",
+        "fillHoles":"0",
+        "verboseLevel":"info",
+        "correctEV": false
     }
 }

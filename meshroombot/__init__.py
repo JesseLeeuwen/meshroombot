@@ -1,3 +1,5 @@
+from .core import GetJob
+
 # program Design
 # get available meshroombot Job
     # search in scan directory for the first available folder

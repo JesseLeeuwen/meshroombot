@@ -13,6 +13,6 @@ def GetJob(directory, jobTemplates : dict) -> job:
 
         for key in jobTemplates:
             if jobTemplates[key]["accept"](directory + "/" + folder) == True:
-                return job( jobTemplates[key], directory + "/" + folder )
+                return job( jobTemplates[key], directory, folder )
 
     return None

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from meshroombot.core import GetJob
 import tkinter
 import time # sleep
 import os
@@ -9,6 +8,9 @@ import configparser
 
 from pathlib import Path
 from tkinter import filedialog, messagebox
+
+import meshroombot
+from meshroombot import job
 
 # parse arguments
 parser = argparse.ArgumentParser(description='meshroom bot run script')
@@ -69,11 +71,18 @@ with open(settingsPath, 'w') as configfile:
     configfile.close( )
 
 # template lib
+modulePath = os.path.abspath(os.path.dirname(__file__))
 jobTemplates = {
     "new scan" : {
         "commands" : [
-            "cmd /C \"cd /D \"{meshroom}\" && meshroom_photogrammetry.exe --save \"{folder}/Meshroom/run.mg\" --input \"{folder}/Photo's/\" --cache \"{folder}/Meshroom/\" --overrides \"{override}\" \"",
-            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/run.mg\" --forceStatus --toNode MeshFiltering --cache \"{folder}/Meshroom/\" \""
+            # create cache folder
+            "cmd /C \"IF NOT EXIST \"{folder}/Meshroom\" ( md \"{folder}/Meshroom\" ) \"", 
+            # create project file
+            "cmd /C \"cd /D \"{meshroom}\" && meshroom_photogrammetry.exe --save \"{folder}/Meshroom/{folderName}.mg\" --input \"{folder}/Photo's/\" --cache \"{folder}/Meshroom/\" --overrides \"{override}\" \"",
+            # change project settings
+            "cmd /C \"python "+modulePath+"/FixMeshroomProjectFile.py \"{folder}/Meshroom/{folderName}.mg\" \"{override}\" \"",
+            # run project first phase
+            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/{folderName}.mg\" --forceStatus --toNode MeshFiltering --cache \"{folder}/Meshroom/\" \""
         ],
         "accept" : lambda a: ( not os.path.basename( a ).endswith(']') and os.path.isdir(a + "/Photo's") ),
         "computeState"  : "[-]",
@@ -82,7 +91,12 @@ jobTemplates = {
     },
     "texturing" : {
         "commands" : [
-            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/run.mg\" --forceStatus --toNode Texturing --cache \"{folder}/Meshroom/\" \""
+            # ensure cache folder
+            "cmd /C \"IF NOT EXIST \"{folder}/Meshroom\" ( md \"{folder}/Meshroom\" ) \"", 
+            # change project settings
+            "cmd /C \"python "+modulePath+"/FixMeshroomProjectFile.py \"{folder}/Meshroom/{folderName}.mg\" \"{override}\" \"",
+            # run porject second phase
+            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/{folderName}.mg\" --forceStatus --toNode Texturing --cache \"{folder}/Meshroom/\" \""
         ],
         "accept" : lambda a: ( os.path.isfile(a +'/Meshroom/Zmesh.obj') and os.path.basename(a).endswith('[+]') ),
         "computeState"  : "[-]",
@@ -95,7 +109,7 @@ jobTemplates = {
 try:
     while( True ):
         # get Job
-        job = GetJob( directory, jobTemplates )
+        job = meshroombot.GetJob( directory, jobTemplates )
         
         if job is not None:
             job.SetSettingData( Config["settings"]["meshroom"] )

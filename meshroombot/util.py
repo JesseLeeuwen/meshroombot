@@ -19,11 +19,12 @@ def CheckFolderStatus( folderName: str, path: str ) -> str:
     
     try:
         # check if folder is locked
-        os.rename( path, path )
+        os.rename(path, path+ "2")
+        os.rename(path+"2", path)
 
         if( status == None or len( status ) == 0 ):
             return "available"
     except:
-        return "error"
+        return "error" 
     
     return statusLookup[ status[0] ]

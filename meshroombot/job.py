@@ -7,6 +7,7 @@ import re
 # job.Execute()
 
 # commands can contain these variables:
+# {folderName} the name of the projectFolder (Bollard_01)
 # {folder} the directory of the scans which is being processed
 # {meshroom} the directory of meshroom ( set in conf.ini )
 # {override} the path of the override/ settings json
@@ -24,9 +25,11 @@ import re
 
 
 class job:
-    def __init__( self, jobSettings : dict, projectFolder : str ):
+    def __init__( self, jobSettings : dict, directory : str, projectFolder : str ):
         self.jobSettings = jobSettings
-        self.projectFolder = projectFolder
+        self.projectFolder = directory + "/" +projectFolder
+        self.projectFolderName = projectFolder
+        self.projectFolderDir = directory
 
     # parse path and other settings in commands
     def SetSettingData( self, meshroom : str ):
@@ -34,36 +37,31 @@ class job:
 
     # execute job with settings
     def Execute( self ):
-        self.SetState( "computeState" )
-        error = False
-        os.makedirs(self.projectFolder + "/Meshroom", exist_ok=True)
+        try:
+            self.SetState( "computeState" )
+            error = False
 
-        for cmd in self.jobSettings["commands"]:
-            cmd_compiled = self.ParseCommandArguments( cmd )
-            print( "run: " + cmd_compiled )
-            # check for error
-            if subprocess.call( cmd_compiled ) > 0:
-                error = True
-                break
+            for cmd in self.jobSettings["commands"]:
+                cmd_compiled = self.ParseCommandArguments( cmd )
+                print( "run: " + cmd_compiled )
+                # check for error
+                if subprocess.call( cmd_compiled ) > 0:
+                    error = True
+                    break
 
-        if not error:
-            self.SetState( "doneState" )
-        else:
-            self.SetState( "error" )
+            if not error:
+                self.SetState( "doneState" )            
+            else:
+                self.SetState( "error" )
+
+            print( "job complete" )
+        except:
+            print( "error while performing a job on: {0}".format(self.projectFolderName) )
 
     def SetState( self, state : str ):
-        status = re.findall( r"(?<=\[)(.*?)(?=\])", os.path.basename(self.projectFolder))
-        
-        if( status == None or len( status ) == 0 ):
-            # rename and update project folder
-            os.rename( self.projectFolder, self.projectFolder + self.jobSettings[state] )
-            self.projectFolder = self.projectFolder + self.jobSettings[state]
-            return
-
-        # rename and update project folder
-        newdir = self.projectFolder.replace( "[" + status[0] + "]", self.jobSettings[state] )
-        os.rename( self.projectFolder, newdir )
-        self.projectFolder = newdir
+        newPath = self.projectFolderDir + "/" + self.projectFolderName + self.jobSettings[state]
+        os.rename( self.projectFolder,newPath )
+        self.projectFolder = newPath
 
     # parse command arguments template
     def ParseCommandArguments( self, cmd: str ) -> str:
@@ -71,5 +69,6 @@ class job:
 
         return cmd.replace( "{folder}", self.projectFolder) \
             .replace( "{override}", modulePath + "/data.json" ) \
-            .replace( "{meshroom}", self.meshroom )
+            .replace( "{meshroom}", self.meshroom ) \
+            .replace( "{folderName}", self.projectFolderName )
         
