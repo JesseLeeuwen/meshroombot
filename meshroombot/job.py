@@ -59,9 +59,10 @@ class job:
             print( "error while performing a job on: {0}".format(self.projectFolderName) )
 
     def SetState( self, state : str ):
-        newPath = self.projectFolderDir + "/" + self.projectFolderName + self.jobSettings[state]
-        os.rename( self.projectFolder,newPath )
-        self.projectFolder = newPath
+        folderName = re.sub( r"(\[.?\])", "", self.projectFolderName )
+        newDir = self.projectFolderDir + "/" + folderName + self.jobSettings[state]
+        os.rename( self.projectFolder, newDir )
+        self.projectFolder = newDir
 
     # parse command arguments template
     def ParseCommandArguments( self, cmd: str ) -> str:
@@ -70,5 +71,5 @@ class job:
         return cmd.replace( "{folder}", self.projectFolder) \
             .replace( "{override}", modulePath + "/data.json" ) \
             .replace( "{meshroom}", self.meshroom ) \
-            .replace( "{folderName}", self.projectFolderName )
+            .replace( "{folderName}", re.sub( r"(\[.?\])", "", self.projectFolderName ) )
         
