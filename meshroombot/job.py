@@ -2,6 +2,7 @@ import os
 import configparser
 import subprocess
 import re
+import sys
 
 #api
 # job.Execute()
@@ -55,11 +56,11 @@ class job:
                 self.SetState( "error" )
 
             print( "job complete" )
-        except:
-            print( "error while performing a job on: {0}".format(self.projectFolderName) )
+        except Exception as e:
+            print( "error while performing a job on: {0}".format(self.projectFolderName), str(e) )
 
     def SetState( self, state : str ):
-        folderName = re.sub( r"(\[.?\])", "", self.projectFolderName )
+        folderName = re.sub( r"(\[.*\])", "", self.projectFolderName )
         newDir = self.projectFolderDir + "/" + folderName + self.jobSettings[state]
         os.rename( self.projectFolder, newDir )
         self.projectFolder = newDir
@@ -71,5 +72,5 @@ class job:
         return cmd.replace( "{folder}", self.projectFolder) \
             .replace( "{override}", modulePath + "/data.json" ) \
             .replace( "{meshroom}", self.meshroom ) \
-            .replace( "{folderName}", re.sub( r"(\[.?\])", "", self.projectFolderName ) )
-        
+            .replace( "{folderName}", re.sub( r"(\[.*\])", "", self.projectFolderName ) )
+         

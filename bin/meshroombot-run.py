@@ -76,31 +76,39 @@ jobTemplates = {
     "new scan" : {
         "commands" : [
             # create cache folder
-            "cmd /C \"IF NOT EXIST \"{folder}/Meshroom\" ( md \"{folder}/Meshroom\" ) \"", 
+            "cmd /C \"IF NOT EXIST \"{folder}/Meshroom/MeshroomCache\" ( md \"{folder}/Meshroom/MeshroomCache\" ) \"", 
             # create project file
-            "cmd /C \"cd /D \"{meshroom}\" && meshroom_photogrammetry.exe --save \"{folder}/Meshroom/{folderName}.mg\" --input \"{folder}/Photo's/\" --cache \"{folder}/Meshroom/\" --overrides \"{override}\" \"",
+            "cmd /C \"cd /D \"{meshroom}\" && meshroom_photogrammetry.exe --save \"{folder}/Meshroom/{folderName}.mg\" --input \"{folder}/Photo's/\" --cache \"{folder}/Meshroom/MeshroomCache\" --overrides \"{override}\" \"",
             # change project settings
-            "cmd /C \"python "+modulePath+"/FixMeshroomProjectFile.py \"{folder}/Meshroom/{folderName}.mg\" \"{override}\" \"",
+            "cmd /C \"python "+modulePath+"/FixMeshroomProjectFile.py \"{folder}/Meshroom/{folderName}.mg\" \"{override}\" --meshroom {meshroom} \"",
             # run project first phase
-            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/{folderName}.mg\" --forceStatus --toNode MeshFiltering --cache \"{folder}/Meshroom/\" \""
+            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/{folderName}.mg\" --forceStatus --toNode MeshFiltering --cache \"{folder}/Meshroom/MeshroomCache\" \""
         ],
         "accept" : lambda a: ( not os.path.basename( a ).endswith(']') and os.path.isdir(a + "/Photo's") ),
-        "computeState"  : "[-]",
-        "doneState"     : "[+]",
-        "error"         : "[!]"
+        "computeState" : "[meshing]",
+        "doneState" : "[meshing_done]",
+        "error" : "[!]"
     },
     "texturing" : {
         "commands" : [
             # ensure cache folder
-            "cmd /C \"IF NOT EXIST \"{folder}/Meshroom\" ( md \"{folder}/Meshroom\" ) \"", 
+            "cmd /C \"IF NOT EXIST \"{folder}/Meshroom/MeshroomCache\" ( md \"{folder}/Meshroom/MeshroomCache\" ) \"", 
+            
+            # ensure cache folder
+            "cmd /C \"IF NOT EXIST \"{folder}/Mesh\" ( md \"{folder}/Mesh\" ) \"", 
+            
             # change project settings
-            "cmd /C \"python "+modulePath+"/FixMeshroomProjectFile.py \"{folder}/Meshroom/{folderName}.mg\" \"{override}\" \"",
+            "cmd /C \"python "+modulePath+"/FixMeshroomProjectFile.py \"{folder}/Meshroom/{folderName}.mg\" \"{override}\" --meshroom {meshroom}\"",
+            
             # run porject second phase
-            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/{folderName}.mg\" --forceStatus --toNode Texturing --cache \"{folder}/Meshroom/\" \""
+            "cmd /C \"cd /D \"{meshroom}\" && meshroom_compute.exe \"{folder}/Meshroom/{folderName}.mg\" --forceCompute --node Texturing --cache \"{folder}/Meshroom/MeshroomCache\" \"",
+            
+            # move texturing result to {folder}/Mesh
+            "cmd /C \""+modulePath+"/Move.bat \"{folder}/Meshroom/MeshroomCache/Texturing\"\""
         ],
-        "accept" : lambda a: ( os.path.isfile(a +'/Meshroom/Zmesh.obj') and os.path.basename(a).endswith('[+]') ),
-        "computeState"  : "[-]",
-        "doneState "    : "[#]",
+        "accept" : lambda a: ( os.path.isfile(a +'/Meshroom/Zmesh.OBJ') and os.path.basename(a).endswith('[meshing_done]') ),
+        "computeState"  : "[texturing]",
+        "doneState"     : "[texturing_done]",
         "error"         : "[!!]"
     }
 }

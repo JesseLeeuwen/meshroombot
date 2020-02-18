@@ -8,7 +8,7 @@
         "verboseLevel": "info"
     },
     "Texturing_1":{
-        "inputMesh": "{MeshFiltering_1.outputMesh}../../Zmesh.obj",
+        "inputMesh": "{project}/Zmesh.OBJ",
         "textureSide": "8192",
         "downscale":"1",
         "outputTextureFileType":"jpg",
